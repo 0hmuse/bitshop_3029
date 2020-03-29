@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+<style type="text/css">
+#list{
+	
+}
+#goods{
+	display: inline-block;
+	border: solid grey 2px;
+	width: 130px;
+	margin: 2px;
+}
+</style>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var arr;
+	$("#btnAdd").click(function(){
+		var goods =  new FormData(document.getElementById("f"));
+		//var goods = new FormData($("#f")[0]);
+		
+		$.ajax("/insertGoods",{
+			data:goods,
+			processData:false,
+			contentType:false,
+			type:"POST",
+			success:function(r){
+			 alert(r);
+		}});
+		
+		/* //var goods = $("#f").serialize();
+		var goods = new FormData($("#f")[0]);
+		//svar img = $("#uploadFile").val()
+		//alert(goods);
+		$.ajax({
+			url: "insertGoods",
+			processData: false,
+            contentType: false,
+            data: goods,
+            type: 'POST',
+			success:function(r){
+				alert("등록성공!");
+				window.location.href="bitshop.html";
+			},
+			error:function(e){
+				alert("error : "+e);
+			}
+		}); */
+	});
+	
+	function listGoods(){
+		$.each(arr,function(idx,g){
+			var name = $("<p></p>").html("상품명: "+g.item);
+			var price = $("<p></p>").html("가격: "+g.price+"원");
+			var fname = $("<img/>").attr({"src":"img/"+g.fname,width:120,hiegth:120});
+			
+			var div = $("<div id='goods'></div>").append(fname,name,price);
+			$("#list").append(div);
+		});
+	};
+	
+	$.getJSON("listGoods",function(data){
+		arr = data;
+		listGoods();
+	});
+	
+});
+</script>
+</head>
+<body>
+	<h2>상품목록</h2>
+	<hr>
+	<div id="list"></div>
+	
+	<hr>
+	<h2>상품등록</h2>
+	<form id="f" method="post" enctype="multipart/form-data">
+		<table id="tb">
+			<tr>
+				<td>상품번호: </td>
+				<td><input type="number" id="no" name="no"></td>
+			</tr>
+			<tr>
+				<td>상품이름: </td>
+				<td><input type="text" id="item" name="item"></td>
+			</tr>
+			<tr>
+				<td>상품수량: </td>
+				<td><input type="number" id="qty" name="qty"></td>
+			</tr>
+			<tr>
+				<td>상품가격: </td>
+				<td><input type="number" id="price" name="price"></td>
+			</tr>
+			<tr>
+				<td>상품사진: </td>
+				<td><input type="file" id="uploadFile" name="uploadFile"></td>
+			</tr>
+			<tr>
+				<td>상세설명: </td>
+				<td><textarea rows="10" cols="20" id="detail" name="detail"></textarea></td>
+			</tr>
+		</table>
+	</form>
+	<button id="btnAdd">등록</button>
+</body>
+</html>
